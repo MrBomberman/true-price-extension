@@ -1,0 +1,12 @@
+{
+  "name": "true-cost-extension",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Compare the real unit price of everyday purchases. Vanilla JavaScript Chrome extension.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "preview": "python3 -m http.server 4173 --bind 127.0.0.1"
+  },
+  "engines": { "node": ">=20" }
+}
