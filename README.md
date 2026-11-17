@@ -6,7 +6,7 @@
 
 True Cost is a Chrome extension that compares similar products by their price per kilogram, liter or item. Package prices can be misleading: a smaller bag of coffee may cost less at checkout but more per kilogram. True Cost keeps the calculation visible and saves the products you want to compare.
 
-The extension uses plain HTML and JavaScript, with [Bootstrap 5.3.9 CSS](https://getbootstrap.com/docs/5.3/getting-started/download/) linked from jsDelivr. All visual styling uses Bootstrap components and utility classes; there are no custom stylesheets or inline styles. There are no JavaScript dependencies, API keys, accounts, remote scripts or build steps. The stylesheet uses a pinned version and a Subresource Integrity hash. Its standard visual styling needs an internet connection; calculations and local storage do not.
+The extension uses plain HTML and JavaScript, with [Bootstrap 5.3.9 CSS](https://getbootstrap.com/docs/5.3/getting-started/download/) linked from jsDelivr. Bootstrap components and utility classes provide the styling, with a fixed popup width. There are no runtime JavaScript dependencies, API keys, accounts, remote scripts or build steps. The stylesheet uses a pinned version and a Subresource Integrity hash. Its standard visual styling needs an internet connection; calculations and local storage do not.
 
 ## Install in Chrome
 
@@ -38,10 +38,10 @@ Enter the price for the **entire multipack**, not the price of one item in it. G
 
 For example:
 
-| Product | Price | Quantity | Unit price |
-| --- | ---: | ---: | ---: |
-| Coffee, small bag | RUB 900 | 250 g | RUB 3,600/kg |
-| Coffee, large bag | RUB 1,250 | 400 g | RUB 3,125/kg |
+| Product           |     Price | Quantity |   Unit price |
+| ----------------- | --------: | -------: | -----------: |
+| Coffee, small bag |   RUB 900 |    250 g | RUB 3,600/kg |
+| Coffee, large bag | RUB 1,250 |    400 g | RUB 3,125/kg |
 
 The large bag saves RUB 475 per kilogram. Products are ranked using the full calculated value; rounding is only applied for display. Currency conversion is intentionally excluded: RUB, USD and EUR are compared separately, as are weight, volume and item counts. Compare similar products yourself; equal units alone do not make two products equivalent.
 
@@ -63,29 +63,49 @@ Product names are rendered as text. Saved source links accept only HTTP and HTTP
 
 ## Files and design
 
-| File | Responsibility |
-| --- | --- |
-| `manifest.json` | Manifest V3 configuration, toolbar action, icons and permissions |
-| `popup.html` | Accessible form and comparison interface |
-| `popup.js` | Form state, rendering and user actions |
-| `calculations.js` | Input validation, unit conversion, ranking and formatting |
-| `storage.js` | Local product persistence |
-| `page.js` | Active-tab capture and read-only product metadata collection |
-| `product-parser.js` | Product names, prices, currencies and package-size extraction |
-| `assets/` | Local logo and Chrome extension icons |
-| `tests/` | Node tests for calculations, storage and active-tab behavior |
+| File                | Responsibility                                                   |
+| ------------------- | ---------------------------------------------------------------- |
+| `manifest.json`     | Manifest V3 configuration, toolbar action, icons and permissions |
+| `popup.html`        | Accessible form and comparison interface                         |
+| `popup.js`          | Form state, rendering and user actions                           |
+| `calculations.js`   | Input validation, unit conversion, ranking and formatting        |
+| `storage.js`        | Local product persistence                                        |
+| `page.js`           | Active-tab capture and read-only product metadata collection     |
+| `product-parser.js` | Product names, prices, currencies and package-size extraction    |
+| `assets/`           | Local logo and Chrome extension icons                            |
+| `tests/`            | Node tests for calculations, storage and active-tab behavior     |
+| `eslint.config.js`  | JavaScript checks for browser code and Node.js tests             |
+| `.prettierrc.json`  | Tab indentation and consistent JavaScript/HTML formatting        |
 
 Keeping arithmetic separate from the DOM lets the calculations be tested without a browser. Keeping storage separate allows errors to be handled before the displayed product list changes. The interface and extension both use ES modules supported directly by Chrome. Bootstrap is loaded with a stylesheet link; its JavaScript bundle is not needed.
 
 ## Development and checks
 
-Node.js 20 or newer is needed only for the checks:
+For development, use a maintained Node.js release compatible with ESLint: 22.13+ (22.x) or 24+. Install the development tools once:
+
+```sh
+npm ci
+```
+
+Run ESLint and Prettier together:
+
+```sh
+npm run lint
+```
+
+Apply automatic fixes and format the code with tabs:
+
+```sh
+npm run lint:fix
+```
+
+Run the behavioral tests:
 
 ```sh
 npm test
 ```
 
-There is nothing to install. To view the interface in a normal browser, run:
+Chrome loads the extension directly from its folder. To view the interface in a normal browser, run:
 
 ```sh
 npm run preview

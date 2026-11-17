@@ -1,56 +1,387 @@
 <!doctype html>
 <!-- AI assistance: OpenAI Codex (ChatGPT) helped create and refine this markup. -->
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>True Cost — Compare the real price</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.9/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-yEPZ7jP9S0QKiUQ0m3jjsO4ProIW7wvR9gXkI7JOGa2XVsw53Yke2bsdkBbjmmiX" crossorigin="anonymous">
-  <script type="module" src="popup.js"></script>
-</head>
-<body class="bg-light" style="width: 500px;">
-  <div id="app" class="container-fluid p-3">
-    <header class="d-flex align-items-center justify-content-between gap-3 border-bottom pb-3 mb-3">
-      <a class="d-flex align-items-center gap-2 text-decoration-none text-success" href="popup.html" aria-label="True Cost home"><img src="assets/logo.svg" width="32" height="32" alt=""><span class="fw-bold text-nowrap">True Cost<small class="d-block fw-normal text-body-secondary">A little clarity at the shelf.</small></span></a>
-    </header>
-    <main>
-      <div class="mb-4"><p class="small text-success fw-semibold mb-1">LESS GUESSWORK. BETTER VALUE.</p><h1 class="h3 text-nowrap">Compare the real price.</h1><p class="small text-body-secondary mb-0">Different sizes. Same simple measure.</p></div>
-      <div id="load-error" class="alert alert-danger small" hidden><p id="load-error-text" class="mb-2"></p><button id="retry-button" type="button" class="btn btn-outline-danger btn-sm">Try loading again</button></div>
-      <div class="row g-4">
-        <div id="form-column" class="col-12">
-          <section class="card" aria-labelledby="form-title"><div class="card-body">
-            <div class="d-flex align-items-center justify-content-between gap-3 mb-3"><h2 class="h6 mb-0" id="form-title">Add a product</h2><button type="button" id="page-button" class="btn btn-outline-success btn-sm text-nowrap">Use current page</button></div>
-            <form id="product-form" novalidate>
-              <div class="mb-3"><label class="form-label small" for="name">Product name</label><input class="form-control" id="name" name="name" type="text" maxlength="200" placeholder="e.g. House blend coffee" required aria-describedby="name-error"><span class="small text-danger" id="name-error"></span></div>
-              <div class="row g-2">
-                <div class="col-7"><label class="form-label small" for="price">Total price</label><input class="form-control" id="price" name="price" type="text" inputmode="decimal" maxlength="100" placeholder="0.00" required aria-describedby="price-error price-hint"><span class="small text-danger" id="price-error"></span></div>
-                <div class="col-5"><label class="form-label small" for="currency">Currency</label><select class="form-select" id="currency" name="currency" aria-describedby="currency-error"><option value="RUB">RUB · ₽</option><option value="USD">USD · $</option><option value="EUR">EUR · €</option></select><span class="small text-danger" id="currency-error"></span></div>
-              </div>
-              <p class="form-text mt-1 mb-3" id="price-hint">Enter the price for all packs together.</p>
-              <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label small" for="quantity">Amount per pack</label><input class="form-control" id="quantity" name="quantity" type="text" inputmode="decimal" maxlength="100" placeholder="250" required aria-describedby="quantity-error"><span class="small text-danger" id="quantity-error"></span></div>
-                <div class="col-3"><label class="form-label small" for="unit">Unit</label><select class="form-select" id="unit" name="unit" aria-describedby="unit-error"><option value="g">g</option><option value="kg">kg</option><option value="ml">ml</option><option value="l">L</option><option value="pcs">items</option></select><span class="small text-danger" id="unit-error"></span></div>
-                <div class="col-3"><label class="form-label small" for="packs">Packs</label><input class="form-control" id="packs" name="packs" type="text" inputmode="numeric" maxlength="100" value="1" required aria-describedby="packs-error"><span class="small text-danger" id="packs-error"></span></div>
-              </div>
-              <details id="source-details" class="small mb-3"><summary class="text-body-secondary">Source link <span class="text-body-secondary">(optional)</span></summary><div class="mt-2"><label class="form-label" for="url">Product URL</label><input class="form-control" id="url" name="url" type="url" maxlength="4096" placeholder="https://shop.example/product" aria-describedby="url-error"><span class="small text-danger" id="url-error"></span></div></details>
-              <div class="d-flex justify-content-between align-items-center gap-2 bg-success-subtle text-success-emphasis rounded p-3 mb-3" id="unit-preview" aria-live="polite"><span class="small">Price in perspective</span><strong class="text-end text-break" id="preview-price">— <small class="fw-normal">per kg</small></strong></div>
-              <div class="d-flex gap-2"><button id="submit-button" type="submit" class="btn btn-success flex-grow-1" disabled>Add product <span aria-hidden="true">+</span></button><button id="cancel-button" type="button" class="btn btn-outline-secondary" hidden>Cancel</button></div>
-            </form>
-          </div></section>
-        </div>
-        <div id="comparison-column" class="col-12">
-          <section aria-labelledby="comparison-title">
-            <div class="mb-3"><h2 class="h6" id="comparison-title">Your comparison <span id="product-count" class="badge text-bg-secondary">0</span></h2><span class="small text-body-secondary">Lowest unit price first</span></div>
-            <div class="d-flex flex-wrap gap-1 mb-3" role="group" aria-label="Filter by measurement"><button class="btn btn-sm btn-success" type="button" data-filter="all" aria-pressed="true">All</button><button class="btn btn-sm btn-outline-success" type="button" data-filter="weight" aria-pressed="false">Weight</button><button class="btn btn-sm btn-outline-success" type="button" data-filter="volume" aria-pressed="false">Volume</button><button class="btn btn-sm btn-outline-success" type="button" data-filter="count" aria-pressed="false">Items</button></div>
-            <button type="button" id="examples-button" class="btn btn-outline-secondary btn-sm mb-3" hidden>Try example</button>
-            <p id="example-note" class="alert alert-secondary small py-2" hidden>Example coffee products are included. Edit or remove them anytime.</p>
-            <div id="product-list" aria-live="polite"><div class="border rounded text-center p-4"><p class="small mb-0">Loading your products…</p></div></div>
-          </section>
-        </div>
-      </div>
-      <footer class="small text-body-secondary text-center my-4">Saved on your device. Just for you.</footer>
-    </main>
-  </div>
-  <div id="feedback" class="alert alert-success position-fixed bottom-0 start-0 end-0 m-3 shadow" role="status" aria-live="polite" hidden><span id="feedback-text"></span><button type="button" id="undo-button" class="btn btn-outline-success btn-sm ms-2" hidden>Undo</button><button type="button" id="dismiss-button" class="btn btn-sm ms-2" aria-label="Dismiss notification">×</button></div>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>True Cost — Compare the real price</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.9/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-yEPZ7jP9S0QKiUQ0m3jjsO4ProIW7wvR9gXkI7JOGa2XVsw53Yke2bsdkBbjmmiX"
+			crossorigin="anonymous"
+		/>
+		<script type="module" src="popup.js"></script>
+	</head>
+	<body class="bg-light" style="width: 500px">
+		<div id="app" class="container-fluid p-3">
+			<header
+				class="d-flex align-items-center justify-content-between gap-3 border-bottom pb-3 mb-3"
+			>
+				<a
+					class="d-flex align-items-center gap-2 text-decoration-none text-success"
+					href="popup.html"
+					aria-label="True Cost home"
+					><img
+						src="assets/logo.svg"
+						width="32"
+						height="32"
+						alt=""
+					/><span class="fw-bold text-nowrap"
+						>True Cost<small
+							class="d-block fw-normal text-body-secondary"
+							>A little clarity at the shelf.</small
+						></span
+					></a
+				>
+			</header>
+			<main>
+				<div class="mb-4">
+					<p class="small text-success fw-semibold mb-1">
+						LESS GUESSWORK. BETTER VALUE.
+					</p>
+					<h1 class="h3 text-nowrap">Compare the real price.</h1>
+					<p class="small text-body-secondary mb-0">
+						Different sizes. Same simple measure.
+					</p>
+				</div>
+				<div id="load-error" class="alert alert-danger small" hidden>
+					<p id="load-error-text" class="mb-2"></p>
+					<button
+						id="retry-button"
+						type="button"
+						class="btn btn-outline-danger btn-sm"
+					>
+						Try loading again
+					</button>
+				</div>
+				<div class="row g-4">
+					<div id="form-column" class="col-12">
+						<section class="card" aria-labelledby="form-title">
+							<div class="card-body">
+								<div
+									class="d-flex align-items-center justify-content-between gap-3 mb-3"
+								>
+									<h2 class="h6 mb-0" id="form-title">
+										Add a product
+									</h2>
+									<button
+										type="button"
+										id="page-button"
+										class="btn btn-outline-success btn-sm text-nowrap"
+									>
+										Use current page
+									</button>
+								</div>
+								<form id="product-form" novalidate>
+									<div class="mb-3">
+										<label
+											class="form-label small"
+											for="name"
+											>Product name</label
+										><input
+											class="form-control"
+											id="name"
+											name="name"
+											type="text"
+											maxlength="200"
+											placeholder="e.g. House blend coffee"
+											required
+											aria-describedby="name-error"
+										/><span
+											class="small text-danger"
+											id="name-error"
+										></span>
+									</div>
+									<div class="row g-2">
+										<div class="col-7">
+											<label
+												class="form-label small"
+												for="price"
+												>Total price</label
+											><input
+												class="form-control"
+												id="price"
+												name="price"
+												type="text"
+												inputmode="decimal"
+												maxlength="100"
+												placeholder="0.00"
+												required
+												aria-describedby="price-error price-hint"
+											/><span
+												class="small text-danger"
+												id="price-error"
+											></span>
+										</div>
+										<div class="col-5">
+											<label
+												class="form-label small"
+												for="currency"
+												>Currency</label
+											><select
+												class="form-select"
+												id="currency"
+												name="currency"
+												aria-describedby="currency-error"
+											>
+												<option value="RUB">
+													RUB · ₽
+												</option>
+												<option value="USD">
+													USD · $
+												</option>
+												<option value="EUR">
+													EUR · €
+												</option></select
+											><span
+												class="small text-danger"
+												id="currency-error"
+											></span>
+										</div>
+									</div>
+									<p
+										class="form-text mt-1 mb-3"
+										id="price-hint"
+									>
+										Enter the price for all packs together.
+									</p>
+									<div class="row g-2 mb-3">
+										<div class="col-6">
+											<label
+												class="form-label small"
+												for="quantity"
+												>Amount per pack</label
+											><input
+												class="form-control"
+												id="quantity"
+												name="quantity"
+												type="text"
+												inputmode="decimal"
+												maxlength="100"
+												placeholder="250"
+												required
+												aria-describedby="quantity-error"
+											/><span
+												class="small text-danger"
+												id="quantity-error"
+											></span>
+										</div>
+										<div class="col-3">
+											<label
+												class="form-label small"
+												for="unit"
+												>Unit</label
+											><select
+												class="form-select"
+												id="unit"
+												name="unit"
+												aria-describedby="unit-error"
+											>
+												<option value="g">g</option>
+												<option value="kg">kg</option>
+												<option value="ml">ml</option>
+												<option value="l">L</option>
+												<option value="pcs">
+													items
+												</option></select
+											><span
+												class="small text-danger"
+												id="unit-error"
+											></span>
+										</div>
+										<div class="col-3">
+											<label
+												class="form-label small"
+												for="packs"
+												>Packs</label
+											><input
+												class="form-control"
+												id="packs"
+												name="packs"
+												type="text"
+												inputmode="numeric"
+												maxlength="100"
+												value="1"
+												required
+												aria-describedby="packs-error"
+											/><span
+												class="small text-danger"
+												id="packs-error"
+											></span>
+										</div>
+									</div>
+									<details
+										id="source-details"
+										class="small mb-3"
+									>
+										<summary class="text-body-secondary">
+											Source link
+											<span class="text-body-secondary"
+												>(optional)</span
+											>
+										</summary>
+										<div class="mt-2">
+											<label class="form-label" for="url"
+												>Product URL</label
+											><input
+												class="form-control"
+												id="url"
+												name="url"
+												type="url"
+												maxlength="4096"
+												placeholder="https://shop.example/product"
+												aria-describedby="url-error"
+											/><span
+												class="small text-danger"
+												id="url-error"
+											></span>
+										</div>
+									</details>
+									<div
+										class="d-flex justify-content-between align-items-center gap-2 bg-success-subtle text-success-emphasis rounded p-3 mb-3"
+										id="unit-preview"
+										aria-live="polite"
+									>
+										<span class="small"
+											>Price in perspective</span
+										><strong
+											class="text-end text-break"
+											id="preview-price"
+											>—
+											<small class="fw-normal"
+												>per kg</small
+											></strong
+										>
+									</div>
+									<div class="d-flex gap-2">
+										<button
+											id="submit-button"
+											type="submit"
+											class="btn btn-success flex-grow-1"
+											disabled
+										>
+											Add product
+											<span aria-hidden="true"
+												>+</span
+											></button
+										><button
+											id="cancel-button"
+											type="button"
+											class="btn btn-outline-secondary"
+											hidden
+										>
+											Cancel
+										</button>
+									</div>
+								</form>
+							</div>
+						</section>
+					</div>
+					<div id="comparison-column" class="col-12">
+						<section aria-labelledby="comparison-title">
+							<div class="mb-3">
+								<h2 class="h6" id="comparison-title">
+									Your comparison
+									<span
+										id="product-count"
+										class="badge text-bg-secondary"
+										>0</span
+									>
+								</h2>
+								<span class="small text-body-secondary"
+									>Lowest unit price first</span
+								>
+							</div>
+							<div
+								class="d-flex flex-wrap gap-1 mb-3"
+								role="group"
+								aria-label="Filter by measurement"
+							>
+								<button
+									class="btn btn-sm btn-success"
+									type="button"
+									data-filter="all"
+									aria-pressed="true"
+								>
+									All</button
+								><button
+									class="btn btn-sm btn-outline-success"
+									type="button"
+									data-filter="weight"
+									aria-pressed="false"
+								>
+									Weight</button
+								><button
+									class="btn btn-sm btn-outline-success"
+									type="button"
+									data-filter="volume"
+									aria-pressed="false"
+								>
+									Volume</button
+								><button
+									class="btn btn-sm btn-outline-success"
+									type="button"
+									data-filter="count"
+									aria-pressed="false"
+								>
+									Items
+								</button>
+							</div>
+							<button
+								type="button"
+								id="examples-button"
+								class="btn btn-outline-secondary btn-sm mb-3"
+								hidden
+							>
+								Try example
+							</button>
+							<p
+								id="example-note"
+								class="alert alert-secondary small py-2"
+								hidden
+							>
+								Example coffee products are included. Edit or
+								remove them anytime.
+							</p>
+							<div id="product-list" aria-live="polite">
+								<div class="border rounded text-center p-4">
+									<p class="small mb-0">
+										Loading your products…
+									</p>
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+				<footer class="small text-body-secondary text-center my-4">
+					Saved on your device. Just for you.
+				</footer>
+			</main>
+		</div>
+		<div
+			id="feedback"
+			class="alert alert-success position-fixed bottom-0 start-0 end-0 m-3 shadow"
+			role="status"
+			aria-live="polite"
+			hidden
+		>
+			<span id="feedback-text"></span
+			><button
+				type="button"
+				id="undo-button"
+				class="btn btn-outline-success btn-sm ms-2"
+				hidden
+			>
+				Undo</button
+			><button
+				type="button"
+				id="dismiss-button"
+				class="btn btn-sm ms-2"
+				aria-label="Dismiss notification"
+			>
+				×
+			</button>
+		</div>
+	</body>
 </html>
