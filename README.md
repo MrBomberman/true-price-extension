@@ -1,5 +1,7 @@
 # True Cost
 
+#### Video Demo: https://youtu.be/gQgO0KDbvHg
+
 True Cost is a Chrome extension that compares similar products by their price per kilogram, liter or item. Package prices can be misleading: a smaller bag of coffee may cost less at checkout but more per kilogram. True Cost keeps the calculation visible and saves the products you want to compare.
 
 The extension uses plain HTML and JavaScript, with [Bootstrap 5.3.9 CSS](https://getbootstrap.com/docs/5.3/getting-started/download/) linked from jsDelivr. All visual styling uses Bootstrap components and utility classes; there are no custom stylesheets or inline styles. There are no JavaScript dependencies, API keys, accounts, remote scripts or build steps. The stylesheet uses a pinned version and a Subresource Integrity hash. Its standard visual styling needs an internet connection; calculations and local storage do not.
