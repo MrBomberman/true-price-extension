@@ -1,6 +1,3 @@
-// AI assistance: OpenAI Codex (ChatGPT) contributed to the design,
-// implementation and refactoring of this file.
-
 const UNITS = {
 	g: { divisor: 1000, baseUnit: 'kg', dimension: 'weight' },
 	kg: { divisor: 1, baseUnit: 'kg', dimension: 'weight' },

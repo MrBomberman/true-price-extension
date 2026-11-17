@@ -1,6 +1,3 @@
-// AI assistance: OpenAI Codex (ChatGPT) contributed to the design,
-// implementation and refactoring of this file.
-
 import { parseProductSnapshot } from './product-parser.js';
 
 // Collect only structured data and semantic tags; Chrome runs this function in the page.

@@ -121,4 +121,6 @@ For a CS50 presentation, explain the calculation and the separation between the 
 
 ## AI assistance
 
-OpenAI Codex (ChatGPT) assisted with architecture discussions, project configuration, code generation and refactoring, test development, debugging, icons, and documentation. The JavaScript, HTML, and test files include comments acknowledging that assistance.
+I built True Cost in collaboration with OpenAI Codex (ChatGPT).
+
+Codex helped with architecture discussions, project configuration, code generation and refactoring, test development, debugging, icons, and documentation.

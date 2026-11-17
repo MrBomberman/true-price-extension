@@ -1,6 +1,3 @@
-// AI assistance: OpenAI Codex (ChatGPT) contributed to the design,
-// implementation and refactoring of this file.
-
 import {
 	validateProduct,
 	calculateUnitPrice,

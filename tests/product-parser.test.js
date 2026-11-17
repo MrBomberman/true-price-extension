@@ -1,5 +1,3 @@
-// AI assistance: OpenAI Codex (ChatGPT) helped write and refine these tests.
-
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parsePackageSize, parseProductSnapshot } from '../product-parser.js';
